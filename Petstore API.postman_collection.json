@@ -1,0 +1,1027 @@
+{
+	"info": {
+		"_postman_id": "b4f4d355-70b4-4939-9fcc-c3a78fa1d1b7",
+		"name": "Petstore API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23730879",
+		"_collection_link": "https://restless-capsule-234280.postman.co/workspace/Team-Workspace~dac75d9e-8276-41c9-8284-fea269215991/collection/23730879-b4f4d355-70b4-4939-9fcc-c3a78fa1d1b7?action=share&source=collection_link&creator=23730879"
+	},
+	"item": [
+		{
+			"name": "Create Pet Available",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"//ПЕРЕВІРКИ",
+							"",
+							"// Перевірка статус-коду",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Перевірка, що відповідь прийшла у форматі JSON",
+							"pm.test(\"Response is JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"// Перевірка відповідності полів зі змінними в колекції",
+							"pm.test(\"PetID matches request\", function () {",
+							"    pm.expect(jsonData.id).to.eql(pm.collectionVariables.get(\"petId\"));",
+							"});",
+							"",
+							"pm.test(\"PetName matches request\", function () {",
+							"    pm.expect(jsonData.name).to.eql(pm.collectionVariables.get(\"petName\"));",
+							"});",
+							"",
+							"pm.test(\"Status matches request\", function () {",
+							"    pm.expect(jsonData.status).to.eql(pm.collectionVariables.get(\"status\"));",
+							"});",
+							"",
+							"pm.test(\"CategoryName matches request\", function () {",
+							"    pm.expect(jsonData.category.name).to.eql(pm.collectionVariables.get(\"categoryName\"));",
+							"});",
+							"",
+							"pm.test(\"CategoryId matches request\", function () {",
+							"    pm.expect(jsonData.category.id).to.eql(pm.collectionVariables.get(\"categoryId\"));",
+							"});",
+							"",
+							"pm.test(\"TagsId matches request\", function () {",
+							"    pm.expect(jsonData.tags[0].id).to.eql(pm.collectionVariables.get(\"tagsId\"));",
+							"});",
+							"",
+							"pm.test(\"TagsName matches request\", function () {",
+							"    pm.expect(jsonData.tags[0].name).to.eql(pm.collectionVariables.get(\"tagsName\"));",
+							"});",
+							"",
+							"pm.test(\"Tags array has correct length\", function () {",
+							"    pm.expect(jsonData.tags).to.have.lengthOf(1);",
+							"});",
+							"",
+							"pm.test(\"photoUrls matches request\", function () {",
+							"    pm.expect(jsonData.photoUrls[0]).to.eql(pm.collectionVariables.get(\"photoUrls\"));",
+							"});",
+							"",
+							"// Перевірка, що PetId не нульовий і не від'ємний",
+							"pm.test(\"PetId > 0\", function () {",
+							"    pm.expect(jsonData.id).to.be.above(0);",
+							"});",
+							"",
+							"// Перевірка коректності формату відповіді та типів даних",
+							"pm.test(\"Data types validation id = 'number'\", function () {",
+							"    pm.expect(jsonData.id).to.be.a('number');",
+							"});",
+							"",
+							"pm.test(\"Data types validation name = 'string'\", function () {",
+							"    pm.expect(jsonData.name).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Data types validation photoUrls = 'array' \", function () {",
+							"    pm.expect(jsonData.photoUrls).to.be.an('array');",
+							"});",
+							"",
+							"pm.test(\"Data types validation tags = 'array' \", function () {",
+							"    pm.expect(jsonData.tags).to.be.an('array')",
+							"});",
+							"",
+							"pm.test(\"Data types validation status = 'string'\", function () {",
+							"    pm.expect(jsonData.status).to.be.a('string');",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Генеруємо випадкові дані\r",
+							"const petId = _.random(1, 100000);\r",
+							"const categoryId = _.random(1, 100);\r",
+							"const categoryName = \"Category_\" + pm.variables.replaceIn('{{$randomFirstName}}');\r",
+							"const petName = pm.variables.replaceIn('{{$randomFirstName}}');\r",
+							"const tagId = _.random(1, 1000);\r",
+							"const tagName = \"Tag_\" + pm.variables.replaceIn('{{$randomFirstName}}');\r",
+							"const photoUrl = pm.variables.replaceIn('{{$randomImageUrl}}');\r",
+							"\r",
+							"// Зберігаємо у змінні колекції, щоб використати в Body та Tests\r",
+							"pm.collectionVariables.set(\"petId\", petId);\r",
+							"pm.collectionVariables.set(\"categoryId\", categoryId);\r",
+							"pm.collectionVariables.set(\"categoryName\", categoryName);\r",
+							"pm.collectionVariables.set(\"petName\", petName);\r",
+							"pm.collectionVariables.set(\"tagsId\", tagId);\r",
+							"pm.collectionVariables.set(\"tagsName\", tagName);\r",
+							"pm.collectionVariables.set(\"photoUrls\", photoUrl);\r",
+							"pm.collectionVariables.set(\"status\", \"available\");"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": {{petId}},\r\n  \"category\": {\r\n    \"id\": {{categoryId}},\r\n    \"name\": \"{{categoryName}}\"\r\n  },\r\n  \"name\": \"{{petName}}\",\r\n  \"photoUrls\": [\r\n    \"{{photoUrls}}\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": {{tagsId}},\r\n      \"name\": \"{{tagsName}}\"\r\n    }\r\n  ],\r\n  \"status\": \"{{status}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/pet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pet Positive",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"//ПЕРЕВІРКИ\r",
+							"\r",
+							"// Перевірка статус-коду\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Перевірка, що відповідь прийшла у форматі JSON\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Перевірка відповідності полів зі змінними в колекції\r",
+							"pm.test(\"PetID matches request\", function () {\r",
+							"    pm.expect(jsonData.id).to.eql(pm.collectionVariables.get(\"petId\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"PetName matches request\", function () {\r",
+							"    pm.expect(jsonData.name).to.eql(pm.collectionVariables.get(\"petName\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status matches request\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(pm.collectionVariables.get(\"status\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"CategoryName matches request\", function () {\r",
+							"    pm.expect(jsonData.category.name).to.eql(pm.collectionVariables.get(\"categoryName\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"CategoryId matches request\", function () {\r",
+							"    pm.expect(jsonData.category.id).to.eql(pm.collectionVariables.get(\"categoryId\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"TagsId matches request\", function () {\r",
+							"    pm.expect(jsonData.tags[0].id).to.eql(pm.collectionVariables.get(\"tagsId\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"TagsName matches request\", function () {\r",
+							"    pm.expect(jsonData.tags[0].name).to.eql(pm.collectionVariables.get(\"tagsName\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"photoUrls matches request\", function () {\r",
+							"    pm.expect(jsonData.photoUrls[0]).to.eql(pm.collectionVariables.get(\"photoUrls\"));\r",
+							"});\r",
+							"\r",
+							"// Перевірка коректності формату відповіді та типів даних\r",
+							"pm.test(\"Data types validation id = 'number'\", function () {\r",
+							"    pm.expect(jsonData.id).to.be.a('number');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Data types validation name = 'string'\", function () {\r",
+							"    pm.expect(jsonData.name).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Data types validation photoUrls = 'array' \", function () {\r",
+							"    pm.expect(jsonData.photoUrls).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Data types validation tags = 'array' \", function () {\r",
+							"    pm.expect(jsonData.tags).to.be.an('array')\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Data types validation status = 'string'\", function () {\r",
+							"    pm.expect(jsonData.status).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/pet/{{petId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pet",
+						"{{petId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Order",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Генеруємо випадкові дані\r",
+							"const orderId = _.random(1, 100);\r",
+							"const shipDate = new Date().toISOString();\r",
+							"\r",
+							"\r",
+							"// Зберігаємо у змінні колекції, щоб використати в Body та Tests\r",
+							"pm.collectionVariables.set(\"orderId\", orderId);\r",
+							"pm.collectionVariables.set(\"shipDate\", shipDate);\r",
+							"pm.collectionVariables.set(\"complete\", true);\r",
+							"pm.collectionVariables.set(\"status\", \"placed\");\r",
+							"pm.collectionVariables.set(\"quantity\", 1);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"const isoDateRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}\\+\\d{4}$/;\r",
+							" \r",
+							"//ПЕРЕВІРКИ\r",
+							"\r",
+							"// Перевірка статус-коду (має бути 200 для Petstore)\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Перевірка, що відповідь прийшла у форматі JSON\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Перевірка відповідності \r",
+							"pm.test(\"OrderID matches request\", function () {\r",
+							"    pm.expect(jsonData.id).to.eql(pm.collectionVariables.get(\"orderId\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"PetID matches request\", function () {\r",
+							"    pm.expect(jsonData.petId).to.eql(pm.collectionVariables.get(\"petId\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status matches request\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(\"placed\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Quantity matches request\", function () { \r",
+							"    pm.expect(jsonData.quantity).to.eql(pm.collectionVariables.get(\"quantity\"));\r",
+							"     });\r",
+							"\r",
+							"pm.test(\"Complet matches request\", function () { \r",
+							"    pm.expect(jsonData.complete).to.eql(pm.collectionVariables.get(\"complete\"));\r",
+							"     });\r",
+							"\r",
+							"\r",
+							"// Перевірка OrderId = 'number'\r",
+							"pm.test(\"Data types validation OrderId = 'number'\", function () {\r",
+							"    pm.expect(jsonData.id).to.be.a('number');\r",
+							"});\r",
+							"\r",
+							"// Перевірка, що OrderId не нульовий і не від'ємний\r",
+							"pm.test(\"OrderId > 0\", function () {\r",
+							"    pm.expect(jsonData.id).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"// Перевірка quantity = 'number'\r",
+							"pm.test(\"Data types validation quantity = 'number'\", function () {\r",
+							"    pm.expect(jsonData.quantity).to.be.a('number');\r",
+							"});\r",
+							"\r",
+							"// Перевірка, що поле complete є булевим\r",
+							"pm.test(\"Complete is boolean\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.complete).to.be.a('boolean');\r",
+							"});\r",
+							"\r",
+							"// Перевірка, що shipDate string\r",
+							"pm.test(\"Data types validation shipDate = 'string'\", function () {\r",
+							"    pm.expect(jsonData.shipDate).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							" // Перевірка, що shipDate має формат ISO 8601\r",
+							"pm.test(\"ShipDate matches format ISO 8601\", function () {\r",
+							"    pm.expect(jsonData.shipDate).to.match(isoDateRegex);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"protocolVersion": "http2"
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": {{orderId}},\r\n  \"petId\": {{petId}},\r\n  \"quantity\": {{quantity}},\r\n  \"shipDate\": \"{{$isoTimestamp}}\",\r\n  \"status\": \"{{status}}\",\r\n  \"complete\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/store/order",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"store",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Status, Photo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"//ПЕРЕВІРКИ\r",
+							"// Перевірка статус-коду (має бути 404 Not Found)\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Перевірка, що відповідь прийшла у форматі JSON\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Перевірка відповідності ID\r",
+							"pm.test(\"PetID matches request\", function () {\r",
+							"    pm.expect(jsonData.id).to.eql(pm.collectionVariables.get(\"petId\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status matches request\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(pm.collectionVariables.get(\"updateStatus\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags matches []\", function () {\r",
+							"    pm.expect(jsonData.tags).to.eql(pm.collectionVariables.get(\"tag\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"photoUrl_1 matches request\", function () {\r",
+							"    pm.expect(jsonData.photoUrls[0]).to.eql(pm.collectionVariables.get(\"updatePhotoUrl_1\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"photoUrl_1 matches request\", function () {\r",
+							"    pm.expect(jsonData.photoUrls[1]).to.eql(pm.collectionVariables.get(\"updatePhotoUrl_2\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"PhotoUrls array has correct length\", function () {\r",
+							"    pm.expect(jsonData.photoUrls).to.have.lengthOf(2);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"updatePhotoUrl_1\", \"http://placeimg.com/700/500\");\r",
+							"pm.collectionVariables.set(\"updatePhotoUrl_2\", \"http://placeimg.ua/100/365\");\r",
+							"pm.collectionVariables.set(\"updateStatus\", \"pending\");\r",
+							"pm.collectionVariables.set(\"tag\", []);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": {{petId}},\r\n  \"status\": \"{{updateStatus}}\",\r\n  \"photoUrls\": [\r\n    \"{{updatePhotoUrl_1}}\",\"{{updatePhotoUrl_2}}\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/pet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Pet Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"// 1. Перевірка статус-коду\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Перевірка, що відповідь прийшла у форматі JSON\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Message matches petId\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(pm.variables.get(\"petId\").toString());\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const newPetName = \"New_\" + pm.variables.replaceIn('{{$randomFirstName}}');\r",
+							"\r",
+							"pm.collectionVariables.set(\"newPetName\", newPetName);\r",
+							"pm.collectionVariables.set(\"status_sold\", \"sold\");"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "{{newPetName}}",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "{{status_sold}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/pet/{{petId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pet",
+						"{{petId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pet After Updates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"//ПЕРЕВІРКИ\r",
+							"\r",
+							"// Перевірка статус-коду\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Перевірка, що відповідь прийшла у форматі JSON\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Перевірка відповідності полів зі змінними в колекції\r",
+							"pm.test(\"PetID matches request\", function () {\r",
+							"    pm.expect(jsonData.id).to.eql(pm.collectionVariables.get(\"petId\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"PetName matches request\", function () {\r",
+							"    pm.expect(jsonData.name).to.eql(pm.collectionVariables.get(\"newPetName\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status matches request\", function () {\r",
+							"    pm.expect(jsonData.status).to.eql(pm.collectionVariables.get(\"status_sold\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags matches []\", function () {\r",
+							"    pm.expect(jsonData.tags).to.eql(pm.collectionVariables.get(\"tag\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"photoUrl_1 matches request\", function () {\r",
+							"    pm.expect(jsonData.photoUrls[0]).to.eql(pm.collectionVariables.get(\"updatePhotoUrl_1\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"photoUrl_1 matches request\", function () {\r",
+							"    pm.expect(jsonData.photoUrls[1]).to.eql(pm.collectionVariables.get(\"updatePhotoUrl_2\"));\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/pet/{{petId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pet",
+						"{{petId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Pet",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"// Перевірка статус-коду\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Перевірка, що відповідь прийшла у форматі JSON\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Message matches petId\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(pm.variables.get(\"petId\").toString());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Type matches unknown\", function () {\r",
+							"    pm.expect(jsonData.type).to.eql(\"unknown\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Code matches 200\", function () {\r",
+							"    pm.expect(jsonData.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "x-api-key",
+						"value": "special-key",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/pet/{{petId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pet",
+						"{{petId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pet After Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"//ПЕРЕВІРКИ\r",
+							"\r",
+							"// Перевірка статус-коду\r",
+							"pm.test(\"Negative: Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Negative: Response is JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Negative: Message matches unknown\", function () {\r",
+							"    pm.expect(jsonData.message).to.eql(\"Pet not found\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/pet/{{petId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pet",
+						"{{petId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Pet Negative",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//ПЕРЕВІРКИ\r",
+							"\r",
+							"pm.test(\"Negative: Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Negative: Body is empty\", function () {\r",
+							"    pm.expect(pm.response.text().length).to.eql(0);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "x-api-key",
+						"value": "special-key",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/pet/{{petId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pet",
+						"{{petId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Pet without Name Negative",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Negative: немає обов'язкового поля name (помилка 400)\", function () {",
+							"        pm.expect(pm.response.code).to.equal(400); // Очікуємо Bad Request",
+							"    });",
+							"",
+							"pm.test(\"Negative: немає обов'язкового поля name (message = 'bad input')\", function () {",
+							"        pm.expect(jsonData.message).to.eql(\"bad input\");",
+							"    });"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"invalidId\", \"abs\");"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": {{invalidId}},\r\n  \"category\": {\r\n    \"id\": {{$randomInt}},\r\n    \"name\": \"Category{{$randomFirstName}}\"\r\n  },\r\n  \"photoUrls\": [\r\n    \"{{$randomImageUrl}}\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": {{$randomInt}},\r\n      \"name\": \"{{$randomFirstName}}\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/pet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"pet"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "petId",
+			"value": ""
+		},
+		{
+			"key": "categoryId",
+			"value": ""
+		},
+		{
+			"key": "categoryName",
+			"value": ""
+		},
+		{
+			"key": "petName",
+			"value": ""
+		},
+		{
+			"key": "tagsId",
+			"value": ""
+		},
+		{
+			"key": "tagsName",
+			"value": ""
+		},
+		{
+			"key": "photoUrls",
+			"value": ""
+		},
+		{
+			"key": "status",
+			"value": ""
+		},
+		{
+			"key": "orderId",
+			"value": ""
+		},
+		{
+			"key": "shipDate",
+			"value": ""
+		},
+		{
+			"key": "complete",
+			"value": ""
+		},
+		{
+			"key": "quantity",
+			"value": ""
+		},
+		{
+			"key": "updateStatus",
+			"value": ""
+		},
+		{
+			"key": "updatePhotoUrl_1",
+			"value": ""
+		},
+		{
+			"key": "updatePhotoUrl_2",
+			"value": ""
+		},
+		{
+			"key": "tag",
+			"value": ""
+		},
+		{
+			"key": "newPetName",
+			"value": ""
+		},
+		{
+			"key": "status_sold",
+			"value": ""
+		},
+		{
+			"key": "messagePetNotFound",
+			"value": ""
+		}
+	]
+}
